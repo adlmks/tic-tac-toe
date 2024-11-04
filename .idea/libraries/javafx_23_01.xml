@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="javafx-23.01">
+    <ANNOTATIONS>
+      <root url="file://$USER_HOME$/Downloads/javafx-23.0.1-javadoc" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$USER_HOME$/Downloads/javafx-23.0.1-javadoc" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$USER_HOME$/Downloads/javafx-23.0.1-javadoc" />
+    </JAVADOC>
+    <NATIVE>
+      <root url="file://$USER_HOME$/Downloads/javafx-23.0.1-javadoc" />
+    </NATIVE>
+    <SOURCES>
+      <root url="file://$USER_HOME$/Downloads/javafx-23.0.1-javadoc" />
+    </SOURCES>
+    <jarDirectory url="file://$USER_HOME$/Downloads/javafx-23.0.1-javadoc" recursive="false" />
+    <jarDirectory url="file://$USER_HOME$/Downloads/javafx-23.0.1-javadoc" recursive="false" type="SOURCES" />
+  </library>
+</component>
