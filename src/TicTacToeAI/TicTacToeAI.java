@@ -1,4 +1,6 @@
 package TicTacToeAI;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,20 +63,35 @@ public class TicTacToeAI extends JFrame {
     }
 
     private void aiMove() {
-        // Simple AI: Choose a random empty cell
+        // Create a list to hold the coordinates of all empty cells
+        List<int[]> emptyCells = new ArrayList<>();
+
+        // Loop through the board and collect the empty cells
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 if (buttons[row][col].getText().equals("")) {
-                    buttons[row][col].setText("O");
-                    playerTurn = true; // Switch back to player's turn
-                    if (gameContext.checkForWin(getBoardState())) {
-                        endGame("ИИ");
-                    }
-                    return;
+                    emptyCells.add(new int[]{row, col});
                 }
             }
         }
+
+        // If there are empty cells, randomly choose one
+        if (!emptyCells.isEmpty()) {
+            // Randomly select an index from the list of empty cells
+            int randomIndex = (int) (Math.random() * emptyCells.size());
+            int[] chosenCell = emptyCells.get(randomIndex);
+
+            // Make the move in the chosen cell
+            buttons[chosenCell[0]][chosenCell[1]].setText("O");
+            playerTurn = true; // Switch back to player's turn
+
+            // Check for a win after the AI's move
+            if (gameContext.checkForWin(getBoardState())) {
+                endGame("ИИ");
+            }
+        }
     }
+
 
     private boolean isBoardFull() {
         for (int row = 0; row < 3; row++) {
