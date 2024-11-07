@@ -5,10 +5,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Adapter.Game;
+import Adapter.TicTacToeAIAdapter;
 import Facade.TicTacToeFacade;
+import Strategy.GameContext;
+import Strategy.TicTacToeWinStrategy;
 import TicTacToeAI.TicTacToeAI;
 import TicTacToeMultiplayer.TicTacToeMultiplayer;
-
 
 public class TicTacToe extends JFrame {
     public TicTacToe() {
@@ -26,19 +29,21 @@ public class TicTacToe extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String playerName = JOptionPane.showInputDialog("Введите имя игрока:");
-                TicTacToeFacade gameFacade = new TicTacToeFacade();
-                gameFacade.startSinglePlayerGame(playerName); // Use facade to start the game
+                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
+                TicTacToeAI aiGame = new TicTacToeAI(playerName, gameContext);  // Initialize the AI game
+                aiGame.setVisible(true);  // Display the game window
                 dispose(); // Close the menu
             }
         });
+
 
         multiplayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String player1 = JOptionPane.showInputDialog("Введите имя первого игрока:");
                 String player2 = JOptionPane.showInputDialog("Введите имя второго игрока:");
-                TicTacToeFacade gameFacade = new TicTacToeFacade();
-                gameFacade.startMultiplayerGame(player1, player2); // Use facade to start the game
+                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
+                new TicTacToeMultiplayer(player1, player2, gameContext).setVisible(true);
                 dispose(); // Close the menu
             }
         });
@@ -59,3 +64,4 @@ public class TicTacToe extends JFrame {
         SwingUtilities.invokeLater(() -> new TicTacToe().setVisible(true));
     }
 }
+
