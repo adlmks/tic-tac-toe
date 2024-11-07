@@ -5,8 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import Strategy.GameContext;
-import Strategy.TicTacToeWinStrategy;
+import Facade.TicTacToeFacade;
 import TicTacToeAI.TicTacToeAI;
 import TicTacToeMultiplayer.TicTacToeMultiplayer;
 
@@ -27,22 +26,20 @@ public class TicTacToe extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String playerName = JOptionPane.showInputDialog("Введите имя игрока:");
-                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
-                new TicTacToeAI(playerName, gameContext).setVisible(true);
-                dispose(); // Закрыть меню выбора
+                TicTacToeFacade gameFacade = new TicTacToeFacade();
+                gameFacade.startSinglePlayerGame(playerName); // Use facade to start the game
+                dispose(); // Close the menu
             }
         });
 
         multiplayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Ввод имен игроков
                 String player1 = JOptionPane.showInputDialog("Введите имя первого игрока:");
                 String player2 = JOptionPane.showInputDialog("Введите имя второго игрока:");
-                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
-                // Запуск многопользовательской игры
-                new TicTacToeMultiplayer(player1, player2, gameContext).setVisible(true);
-                dispose(); // Закрыть меню выбора
+                TicTacToeFacade gameFacade = new TicTacToeFacade();
+                gameFacade.startMultiplayerGame(player1, player2); // Use facade to start the game
+                dispose(); // Close the menu
             }
         });
 
