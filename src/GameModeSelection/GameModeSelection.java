@@ -5,6 +5,8 @@ import java.awt.*;
 
 import MultiplayerGameSetup.*;
 import TicTacToeAI.*;
+import Strategy.GameContext;
+import Strategy.TicTacToeWinStrategy;
 
 public class GameModeSelection extends JFrame {
 
@@ -21,7 +23,11 @@ public class GameModeSelection extends JFrame {
 
         singlePlayerButton.addActionListener(e -> {
             String playerName = JOptionPane.showInputDialog("Введите имя игрока:");
-            JFrame gameMode = createGameMode("single", playerName, null);
+
+            // Create GameContext for single-player with TicTacToeWinStrategy
+            GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
+
+            JFrame gameMode = createGameMode("single", playerName, null, gameContext);
             if (gameMode != null) {
                 gameMode.setVisible(true);
                 dispose(); // Закрыть меню выбора
@@ -29,7 +35,7 @@ public class GameModeSelection extends JFrame {
         });
 
         multiplayerButton.addActionListener(e -> {
-            JFrame gameMode = createGameMode("multiplayer", null, null);
+            JFrame gameMode = createGameMode("multiplayer", null, null, null);
             if (gameMode != null) {
                 gameMode.setVisible(true);
                 dispose(); // Закрыть меню выбора
@@ -46,10 +52,10 @@ public class GameModeSelection extends JFrame {
     }
 
     // Factory method to create the game mode instance
-    private JFrame createGameMode(String mode, String player1, String player2) {
+    private JFrame createGameMode(String mode, String player1, String player2, GameContext gameContext) {
         switch (mode.toLowerCase()) {
             case "single":
-                return new TicTacToeAI(player1); // Create single-player mode with AI
+                return new TicTacToeAI(player1, gameContext); // Create single-player mode with AI and GameContext
             case "multiplayer":
                 return new MultiplayerGameSetup(); // Create multiplayer setup
             default:

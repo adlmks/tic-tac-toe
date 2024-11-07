@@ -4,21 +4,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Random;
 
+import Strategy.GameContext;
 import TicTacToe.TicTacToe;
-
 public class TicTacToeAI extends JFrame {
     private JButton[][] buttons = new JButton[3][3];
     private String playerName;
-    private boolean playerTurn = true; // true - ход игрока, false - ход ИИ
+    private boolean playerTurn = true; // True for player, false for AI
+    private GameContext gameContext; // Game context with the win strategy
 
-    public TicTacToeAI(String playerName) {
+    public TicTacToeAI(String playerName, GameContext gameContext) {
         this.playerName = playerName;
+        this.gameContext = gameContext;
         setTitle("Одиночная игра с ИИ");
         setSize(300, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(3, 3));
+
         initializeButtons();
     }
 
@@ -44,65 +46,34 @@ public class TicTacToeAI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (playerTurn && buttons[row][col].getText().equals("")) {
-                buttons[row][col].setText("X"); // Игрок делает ход
-                playerTurn = false; // Переключаем ход на ИИ
-                if (!checkForWin()) {
-                    makeIIMove(); // ИИ делает ход
+            if (buttons[row][col].getText().equals("") && playerTurn) {
+                buttons[row][col].setText("X");
+                playerTurn = false; // Switch to AI's turn
+                if (gameContext.checkForWin(getBoardState())) {
+                    endGame(playerName);
+                } else if (isBoardFull()) {
+                    endGame("Ничья!");
+                } else {
+                    aiMove();
                 }
             }
         }
     }
 
-    private void makeIIMove() {
-        Random rand = new Random();
-        while (true) {
-            int row = rand.nextInt(3);
-            int col = rand.nextInt(3);
-            if (buttons[row][col].getText().equals("")) {
-                buttons[row][col].setText("O"); // ИИ делает ход
-                playerTurn = true; // Возвращаем ход игроку
-                checkForWin();
-                break;
+    private void aiMove() {
+        // Simple AI: Choose a random empty cell
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (buttons[row][col].getText().equals("")) {
+                    buttons[row][col].setText("O");
+                    playerTurn = true; // Switch back to player's turn
+                    if (gameContext.checkForWin(getBoardState())) {
+                        endGame("ИИ");
+                    }
+                    return;
+                }
             }
         }
-    }
-
-    private boolean checkForWin() {
-        for (int i = 0; i < 3; i++) {
-            if (buttons[i][0].getText().equals(buttons[i][1].getText()) &&
-                    buttons[i][0].getText().equals(buttons[i][2].getText()) &&
-                    !buttons[i][0].getText().equals("")) {
-                String winner = buttons[i][0].getText().equals("X") ? playerName : "ИИ";
-                endGame("Выиграл " + winner + "!");
-                return true;
-            }
-            if (buttons[0][i].getText().equals(buttons[1][i].getText()) &&
-                    buttons[0][i].getText().equals(buttons[2][i].getText()) &&
-                    !buttons[0][i].getText().equals("")) {
-                String winner = buttons[0][i].getText().equals("X") ? playerName : "ИИ";
-                endGame("Выиграл " + winner + "!");
-                return true;
-            }
-        }
-        if (buttons[0][0].getText().equals(buttons[1][1].getText()) &&
-                buttons[0][0].getText().equals(buttons[2][2].getText()) &&
-                !buttons[0][0].getText().equals("")) {
-            String winner = buttons[0][0].getText().equals("X") ? playerName : "ИИ";
-            endGame("Выиграл " + winner + "!");
-            return true;
-        }
-        if (buttons[0][2].getText().equals(buttons[1][1].getText()) &&
-                buttons[0][2].getText().equals(buttons[2][0].getText()) &&
-                !buttons[0][2].getText().equals("")) {
-            String winner = buttons[0][2].getText().equals("X") ? playerName : "ИИ";
-            endGame("Выиграл " + winner + "!");
-            return true;
-        }
-        if (isBoardFull()) {
-            endGame("Ничья!");
-        }
-        return false;
     }
 
     private boolean isBoardFull() {
@@ -116,29 +87,25 @@ public class TicTacToeAI extends JFrame {
         return true;
     }
 
-    private void endGame(String message) {
-        // Показываем сообщение о победителе
-        JOptionPane.showMessageDialog(this, message, "Игра окончена", JOptionPane.INFORMATION_MESSAGE);
-
-        // Запрос на возврат в меню выбора игры
-        int option = JOptionPane.showConfirmDialog(this, "Хотите вернуться в меню выбора игры?", "Возврат в меню", JOptionPane.YES_NO_OPTION);
-
-        if (option == JOptionPane.YES_OPTION) {
-            // Возврат в меню выбора
-            new TicTacToe().setVisible(true); // Открываем меню выбора игры
-            dispose(); // Закрыть текущее окно игры
-        } else {
-            System.exit(0); // Закрыть приложение, если пользователь не хочет возвращаться в меню
-        }
-    }
-
-    private void resetGame() {
-        // Очистка кнопок и сброс состояния игры
+    private String[][] getBoardState() {
+        String[][] board = new String[3][3];
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                buttons[row][col].setText(""); // Очистка текста на кнопках
+                board[row][col] = buttons[row][col].getText();
             }
         }
-        playerTurn = true; // Возвращаем ход игроку
+        return board;
+    }
+
+    private void endGame(String winner) {
+        String message = winner.equals("Ничья!") ? "Ничья!" : "Выиграл " + winner + "!";
+        JOptionPane.showMessageDialog(this, message, "Игра окончена", JOptionPane.INFORMATION_MESSAGE);
+        int result = JOptionPane.showConfirmDialog(this, "Хотите вернуться в меню выбора игры?", "Выбор игры", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            dispose();
+            new TicTacToe().setVisible(true); // Открываем меню выбора игры
+        } else {
+            System.exit(0); // Закрыть приложение
+        }
     }
 }

@@ -27,7 +27,8 @@ public class TicTacToe extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String playerName = JOptionPane.showInputDialog("Введите имя игрока:");
-                new TicTacToeAI(playerName).setVisible(true);
+                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
+                new TicTacToeAI(playerName, gameContext).setVisible(true);
                 dispose(); // Закрыть меню выбора
             }
         });
