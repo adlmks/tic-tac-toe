@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Strategy.GameContext;
+import Strategy.TicTacToeWinStrategy;
 import TicTacToeAI.TicTacToeAI;
 import TicTacToeMultiplayer.TicTacToeMultiplayer;
 
@@ -36,9 +38,9 @@ public class TicTacToe extends JFrame {
                 // Ввод имен игроков
                 String player1 = JOptionPane.showInputDialog("Введите имя первого игрока:");
                 String player2 = JOptionPane.showInputDialog("Введите имя второго игрока:");
-
+                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
                 // Запуск многопользовательской игры
-                new TicTacToeMultiplayer(player1, player2).setVisible(true);
+                new TicTacToeMultiplayer(player1, player2, gameContext).setVisible(true);
                 dispose(); // Закрыть меню выбора
             }
         });

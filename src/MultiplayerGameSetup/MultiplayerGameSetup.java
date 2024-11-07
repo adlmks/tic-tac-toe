@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import TicTacToeMultiplayer.*;
+import Strategy.GameContext;
+import Strategy.TicTacToeWinStrategy;
+import TicTacToeMultiplayer.TicTacToeMultiplayer;
 
 public class MultiplayerGameSetup extends JFrame {
     private JTextField player1Name;
@@ -42,9 +44,13 @@ public class MultiplayerGameSetup extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String name1 = player1Name.getText();
                 String name2 = player2Name.getText();
-                // Переход к парной игре с введёнными именами
-                dispose(); // Закрываем текущее окно
-                new TicTacToeMultiplayer(name1, name2).setVisible(true); // Открываем парную игру
+
+                // Create GameContext with TicTacToeWinStrategy
+                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
+
+                // Open the multiplayer game with player names and GameContext
+                dispose(); // Close the setup window
+                new TicTacToeMultiplayer(name1, name2, gameContext).setVisible(true); // Open multiplayer game
             }
         });
     }
