@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class TicTacToeView extends JFrame {
+import Model.TicTacToeObserver;
+
+public class TicTacToeView extends JFrame implements TicTacToeObserver {
     private JButton[][] buttons;
 
     public TicTacToeView() {
@@ -44,6 +46,15 @@ public class TicTacToeView extends JFrame {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 buttons[i][j].setText("-");
+            }
+        }
+    }
+
+    @Override
+    public void update(char[][] board, char currentPlayer) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                setButtonText(i, j, String.valueOf(board[i][j]));
             }
         }
     }

@@ -1,20 +1,25 @@
 package TicTacToeMultiplayer;
 
+import Strategy.GameContext;
+import Strategy.WinStrategy;
+import TicTacToe.TicTacToe;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import TicTacToe.TicTacToe;
-
 public class TicTacToeMultiplayer extends JFrame {
     private JButton[][] buttons = new JButton[3][3];
     private String player1, player2;
     private boolean player1Turn = true;
+    private GameContext gameContext;
 
-    public TicTacToeMultiplayer(String player1, String player2) {
+    public TicTacToeMultiplayer(String player1, String player2, GameContext gameContext) {
         this.player1 = player1;
         this.player2 = player2;
+        this.gameContext = gameContext; // Assign the GameContext for win-checking
+
         setTitle("Парная игра");
         setSize(300, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,39 +53,25 @@ public class TicTacToeMultiplayer extends JFrame {
             if (buttons[row][col].getText().equals("")) {
                 buttons[row][col].setText(player1Turn ? "X" : "O");
                 if (checkForWin()) {
-                    endGame(player1Turn ? player1 : player2); // Передаем имя победителя
+                    endGame(player1Turn ? player1 : player2); // Pass the winner's name
                 } else if (isBoardFull()) {
                     endGame("Ничья!");
                 }
-                player1Turn = !player1Turn; // Переключение ходов
+                player1Turn = !player1Turn; // Switch turns
             }
         }
     }
 
     private boolean checkForWin() {
+        // Convert the JButton board to a String[][] array
+        String[][] board = new String[3][3];
         for (int i = 0; i < 3; i++) {
-            if (buttons[i][0].getText().equals(buttons[i][1].getText()) &&
-                    buttons[i][0].getText().equals(buttons[i][2].getText()) &&
-                    !buttons[i][0].getText().equals("")) {
-                return true;
-            }
-            if (buttons[0][i].getText().equals(buttons[1][i].getText()) &&
-                    buttons[0][i].getText().equals(buttons[2][i].getText()) &&
-                    !buttons[0][i].getText().equals("")) {
-                return true;
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = buttons[i][j].getText();
             }
         }
-        if (buttons[0][0].getText().equals(buttons[1][1].getText()) &&
-                buttons[0][0].getText().equals(buttons[2][2].getText()) &&
-                !buttons[0][0].getText().equals("")) {
-            return true;
-        }
-        if (buttons[0][2].getText().equals(buttons[1][1].getText()) &&
-                buttons[0][2].getText().equals(buttons[2][0].getText()) &&
-                !buttons[0][2].getText().equals("")) {
-            return true;
-        }
-        return false;
+        // Use gameContext to check for a win
+        return gameContext.checkForWin(board);
     }
 
     private boolean isBoardFull() {
@@ -95,14 +86,14 @@ public class TicTacToeMultiplayer extends JFrame {
     }
 
     private void endGame(String winner) {
-        String message = winner.equals("Ничья!") ? "Ничья!" : "Выиграл " + winner + "!"; // Формируем сообщение
+        String message = winner.equals("Ничья!") ? "Ничья!" : "Выиграл " + winner + "!";
         JOptionPane.showMessageDialog(this, message, "Игра окончена", JOptionPane.INFORMATION_MESSAGE);
         int result = JOptionPane.showConfirmDialog(this, "Хотите вернуться в меню выбора игры?", "Выбор игры", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             dispose();
-            new TicTacToe().setVisible(true); // Открываем меню выбора игры
+            new TicTacToe().setVisible(true);
         } else {
-            System.exit(0); // Закрыть приложение
+            System.exit(0);
         }
     }
 }

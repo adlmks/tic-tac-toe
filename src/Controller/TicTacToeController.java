@@ -6,6 +6,8 @@ import View.TicTacToeView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import Model.TicTacToeModel;
+import View.TicTacToeView;
 
 public class TicTacToeController {
     private TicTacToeModel model;
@@ -14,6 +16,7 @@ public class TicTacToeController {
     public TicTacToeController(TicTacToeModel model, TicTacToeView view) {
         this.model = model;
         this.view = view;
+        model.addObserver(view);  // Register the view as an observer
         initializeListeners();
     }
 
@@ -34,7 +37,6 @@ public class TicTacToeController {
 
     private void handleButtonClick(int row, int col) {
         if (model.placeMark(row, col)) {
-            view.setButtonText(row, col, String.valueOf(model.getCurrentPlayer()));
             if (model.checkWin()) {
                 view.showMessage("Player " + model.getCurrentPlayer() + " wins!");
                 resetGame();

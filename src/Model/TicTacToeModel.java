@@ -1,12 +1,17 @@
 package Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TicTacToeModel {
     private char[][] board;
     private char currentPlayer;
+    private List<TicTacToeObserver> observers;
 
     public TicTacToeModel() {
         board = new char[3][3];
         currentPlayer = 'X';
+        observers = new ArrayList<>();
         initializeBoard();
     }
 
@@ -16,18 +21,33 @@ public class TicTacToeModel {
                 board[i][j] = '-';
             }
         }
+        notifyObservers();
+    }
+
+    public void addObserver(TicTacToeObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(TicTacToeObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers() {
+        for (TicTacToeObserver observer : observers) {
+            observer.update(board, currentPlayer);
+        }
     }
 
     public boolean placeMark(int row, int col) {
         if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == '-') {
             board[row][col] = currentPlayer;
+            notifyObservers();
             return true;
         }
         return false;
     }
 
     public boolean checkWin() {
-        // Check rows, columns, and diagonals for a win
         for (int i = 0; i < 3; i++) {
             if ((board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer) ||
                     (board[0][i] == currentPlayer && board[1][i] == currentPlayer && board[2][i] == currentPlayer)) {
@@ -55,5 +75,6 @@ public class TicTacToeModel {
 
     public void changePlayer() {
         currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        notifyObservers();
     }
 }
