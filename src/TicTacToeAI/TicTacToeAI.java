@@ -1,4 +1,5 @@
 package TicTacToeAI;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -9,6 +10,7 @@ import java.awt.event.ActionListener;
 
 import Strategy.GameContext;
 import TicTacToe.TicTacToe;
+
 public class TicTacToeAI extends JFrame {
     private JButton[][] buttons = new JButton[3][3];
     private String playerName;
@@ -38,6 +40,21 @@ public class TicTacToeAI extends JFrame {
         }
     }
 
+    // Add this method to allow the adapter to trigger the player's move
+    public void makePlayerMove(int row, int col) {
+        if (buttons[row][col].getText().equals("") && playerTurn) {
+            buttons[row][col].setText("X");
+            playerTurn = false; // Switch to AI's turn
+            if (gameContext.checkForWin(getBoardState())) {
+                endGame(playerName);
+            } else if (isBoardFull()) {
+                endGame("Ничья!");
+            } else {
+                aiMove();
+            }
+        }
+    }
+
     private class ButtonClickListener implements ActionListener {
         private int row, col;
 
@@ -48,25 +65,12 @@ public class TicTacToeAI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (buttons[row][col].getText().equals("") && playerTurn) {
-                buttons[row][col].setText("X");
-                playerTurn = false; // Switch to AI's turn
-                if (gameContext.checkForWin(getBoardState())) {
-                    endGame(playerName);
-                } else if (isBoardFull()) {
-                    endGame("Ничья!");
-                } else {
-                    aiMove();
-                }
-            }
+            makePlayerMove(row, col); // Use the new method
         }
     }
 
     private void aiMove() {
-        // Create a list to hold the coordinates of all empty cells
         List<int[]> emptyCells = new ArrayList<>();
-
-        // Loop through the board and collect the empty cells
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 if (buttons[row][col].getText().equals("")) {
@@ -75,23 +79,17 @@ public class TicTacToeAI extends JFrame {
             }
         }
 
-        // If there are empty cells, randomly choose one
         if (!emptyCells.isEmpty()) {
-            // Randomly select an index from the list of empty cells
             int randomIndex = (int) (Math.random() * emptyCells.size());
             int[] chosenCell = emptyCells.get(randomIndex);
-
-            // Make the move in the chosen cell
             buttons[chosenCell[0]][chosenCell[1]].setText("O");
-            playerTurn = true; // Switch back to player's turn
+            playerTurn = true;
 
-            // Check for a win after the AI's move
             if (gameContext.checkForWin(getBoardState())) {
                 endGame("ИИ");
             }
         }
     }
-
 
     private boolean isBoardFull() {
         for (int row = 0; row < 3; row++) {
@@ -120,9 +118,9 @@ public class TicTacToeAI extends JFrame {
         int result = JOptionPane.showConfirmDialog(this, "Хотите вернуться в меню выбора игры?", "Выбор игры", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             dispose();
-            new TicTacToe().setVisible(true); // Открываем меню выбора игры
+            new TicTacToe().setVisible(true);
         } else {
-            System.exit(0); // Закрыть приложение
+            System.exit(0);
         }
     }
 }
