@@ -3,17 +3,10 @@ package TicTacToe;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import Adapter.Game;
-import Adapter.TicTacToeAIAdapter;
-import Facade.TicTacToeFacade;
-import Strategy.GameContext;
-import Strategy.TicTacToeWinStrategy;
-import TicTacToeAI.TicTacToeAI;
-import TicTacToeMultiplayer.TicTacToeMultiplayer;
+import GameModeSelection.GameModeSelection;
 
 public class TicTacToe extends JFrame {
+
     public TicTacToe() {
         setTitle("Выбор режима игры");
         setSize(300, 200);
@@ -25,35 +18,26 @@ public class TicTacToe extends JFrame {
         JButton multiplayerButton = new JButton("Парная игра");
         JButton exitButton = new JButton("Выход");
 
-        singlePlayerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String playerName = JOptionPane.showInputDialog("Введите имя игрока:");
-                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
-                TicTacToeAI aiGame = new TicTacToeAI(playerName, gameContext);  // Initialize the AI game
-                aiGame.setVisible(true);  // Display the game window
-                dispose(); // Close the menu
+        singlePlayerButton.addActionListener(e -> {
+            String playerName = JOptionPane.showInputDialog("Введите имя игрока:");
+            JFrame aiGame = GameModeSelection.createGameMode("single", playerName, null);
+            if (aiGame != null) {
+                aiGame.setVisible(true);
+                dispose(); // Close the main menu
             }
         });
 
-
-        multiplayerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String player1 = JOptionPane.showInputDialog("Введите имя первого игрока:");
-                String player2 = JOptionPane.showInputDialog("Введите имя второго игрока:");
-                GameContext gameContext = new GameContext(new TicTacToeWinStrategy());
-                new TicTacToeMultiplayer(player1, player2, gameContext).setVisible(true);
-                dispose(); // Close the menu
+        multiplayerButton.addActionListener(e -> {
+            String player1 = JOptionPane.showInputDialog("Введите имя первого игрока:");
+            String player2 = JOptionPane.showInputDialog("Введите имя второго игрока:");
+            JFrame multiplayerGame = GameModeSelection.createGameMode("multiplayer", player1, player2);
+            if (multiplayerGame != null) {
+                multiplayerGame.setVisible(true);
+                dispose(); // Close the main menu
             }
         });
 
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitButton.addActionListener(e -> System.exit(0));
 
         add(singlePlayerButton);
         add(multiplayerButton);
@@ -64,4 +48,3 @@ public class TicTacToe extends JFrame {
         SwingUtilities.invokeLater(() -> new TicTacToe().setVisible(true));
     }
 }
-
